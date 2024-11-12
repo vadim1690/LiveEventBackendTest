@@ -4,10 +4,11 @@ FROM python:3.9-slim
 # Set up your working directory
 WORKDIR /app
 
-# Install system dependencies for dlib and face-recognition
+# Install system dependencies for pyodbc and dlib
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
+    unixodbc-dev \
     libopenblas-dev \
     liblapack-dev \
     libx11-dev \
