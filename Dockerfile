@@ -1,18 +1,31 @@
-# Use a Python base image with dlib and face-recognition pre-installed
-FROM nicokrieg/python-dlib-face-recognition:python3.9-slim
+# Use a standard Python 3.9 slim image
+FROM python:3.9-slim
 
 # Set up your working directory
 WORKDIR /app
 
-# Copy your app files to the container
-COPY . .
+# Install system dependencies for dlib and face-recognition
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    libopenblas-dev \
+    liblapack-dev \
+    libx11-dev \
+    libgtk-3-dev \
+    libboost-all-dev \
+    libjpeg-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
+COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# Expose the port
+# Copy the rest of the application files
+COPY . .
+
+# Expose the port for the FastAPI app
 EXPOSE 8000
 
-# Set the command to run your FastAPI app
+# Set the command to run the FastAPI app
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
